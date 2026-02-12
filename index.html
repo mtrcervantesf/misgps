@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi ubicación GPS</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Obtener ubicación exacta</h1>
+    <button onclick="getLocation()">Obtener mi ubicación</button>
+    <p id="demo"></p>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                // Opciones para máxima precisión
+                const options = {
+                    enableHighAccuracy: true, // usa GPS si está disponible
+                    timeout: 10000,          // tiempo máximo de espera (10 seg)
+                    maximumAge: 0            // no usar caché
+                };
+                navigator.geolocation.getCurrentPosition(showPosition, showError, options);
+            } else {
+                document.getElementById("demo").innerHTML = "Geolocalización no soportada.";
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const precision = position.coords.accuracy; // precisión en metros
+            document.getElementById("demo").innerHTML = 
+                `Latitud: ${lat}<br>Longitud: ${lon}<br>Precisión: ±${precision} metros`;
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById("demo").innerHTML = "Permiso denegado.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById("demo").innerHTML = "Ubicación no disponible.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById("demo").innerHTML = "Tiempo de espera agotado.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
