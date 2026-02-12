@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mi ubicación GPS</title>
+    <title>Mi ubicación en Google Maps</title>
     <meta charset="UTF-8">
+    <style>
+        #map {
+            height: 400px;  /* Altura fija obligatoria para el mapa */
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Obtener ubicación exacta</h1>
-    <button onclick="getLocation()">Obtener mi ubicación</button>
+    <h1>Mi ubicación exacta</h1>
+    <button onclick="getLocation()">Obtener mi ubicación y ver mapa</button>
     <p id="demo"></p>
+    
+    <!-- Contenedor del mapa -->
+    <div id="map"></div>
 
     <script>
+        let map;        // variable global para el mapa
+        let marker;     // variable global para el marcador
+
         function getLocation() {
             if (navigator.geolocation) {
-                // Opciones para máxima precisión
                 const options = {
-                    enableHighAccuracy: true, // usa GPS si está disponible
-                    timeout: 10000,          // tiempo máximo de espera (10 seg)
-                    maximumAge: 0            // no usar caché
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 };
                 navigator.geolocation.getCurrentPosition(showPosition, showError, options);
             } else {
@@ -27,9 +38,30 @@
         function showPosition(position) {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            const precision = position.coords.accuracy; // precisión en metros
+            const precision = position.coords.accuracy;
+            
             document.getElementById("demo").innerHTML = 
                 `Latitud: ${lat}<br>Longitud: ${lon}<br>Precisión: ±${precision} metros`;
+
+            // --- Aquí creamos o actualizamos el mapa ---
+            const myLatLng = { lat, lng: lon };
+
+            // Si el mapa no existe aún, lo creamos
+            if (!map) {
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: myLatLng,
+                    zoom: 16,      // Zoom más cercano
+                });
+                marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    title: "Tu ubicación"
+                });
+            } else {
+                // Si ya existe, solo movemos centro y marcador
+                map.setCenter(myLatLng);
+                marker.setPosition(myLatLng);
+            }
         }
 
         function showError(error) {
@@ -46,5 +78,11 @@
             }
         }
     </script>
+
+    <!-- Carga de Google Maps con TU clave API -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_DE_API&callback=Function.prototype">
+    </script>
+    <!-- El callback vacío evita que Google llame a initMap; nosotros creamos el mapa manualmente -->
 </body>
 </html>
