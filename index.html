@@ -1,88 +1,297 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Mi ubicación en Google Maps</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Pagos - Recaudo</title>
     <style>
-        #map {
-            height: 400px;  /* Altura fija obligatoria para el mapa */
-            width: 100%;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .total-recaudado {
+            background-color: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .total-recaudado span {
+            font-size: 1.5em;
+            margin-left: 10px;
+            color: #ffd700;
+        }
+
+        .lista-pagos {
+            padding: 20px;
+        }
+
+        .pago-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s;
+        }
+
+        .pago-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .nombre {
+            font-size: 1.1em;
+            color: #333;
+            flex: 2;
+        }
+
+        .estado-pago {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pagado-label {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .monto {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .monto-especial {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .resumen {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-top: 2px solid #667eea;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .total-personas {
+            background-color: #e3f2fd;
+        }
+
+        .total-recaudo-final {
+            background-color: #d4edda;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        .badge {
+            background-color: #28a745;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .pago-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .estado-pago {
+                width: 100%;
+                justify-content: space-between;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Mi ubicación exacta</h1>
-    <button onclick="getLocation()">Obtener mi ubicación y ver mapa</button>
-    <p id="demo"></p>
-    
-    <!-- Contenedor del mapa -->
-    <div id="map"></div>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Registro de Pagos</h1>
+            <p>Lista de participantes y estado de cuentas</p>
+            <div class="total-recaudado" id="totalRecaudadoHeader">
+                Total Recaudado: <span id="totalAmount">$0</span>
+            </div>
+        </div>
+
+        <div class="lista-pagos" id="listaPagos">
+            <!-- Los nombres se cargarán dinámicamente con JavaScript -->
+        </div>
+
+        <div class="resumen" id="resumen">
+            <!-- El resumen se cargará dinámicamente -->
+        </div>
+    </div>
 
     <script>
-        let map;        // variable global para el mapa
-        let marker;     // variable global para el marcador
+        // Lista de nombres
+        const nombres = [
+            "CAÑON FRANCO JUAN MATTIAS",
+            "CORREA PALENCIA TAI SHIREL",
+            "ESTUPIÑAN MELENDEZ JUAN DIEGO",
+            "GARCIA SEPULVEDA SAMUEL DAVID",
+            "GÓMEZ NIÑO THALIANA",
+            "MAGURNO MARTINEZ MARIANGEL",
+            "NOVOA ROMERO ISABEL SOFIA",
+            "OLARTE ACOSTA PAULINA DEL SOL",
+            "OSPINA CRUZ MILAN ENRIQUE",
+            "PARALES CASTELLANOS THIAGO GIOVANNY",
+            "RIVERA GOMEZ MATHIAS",
+            "RIVERA GUARIN NICOLAS",
+            "TORRES VILLAMIZAR TAYLOR",
+            "VALENCIA JAIMES MARIANGEL",
+            "MARTINEZ ZAPATA SAMUEL",
+            "FELIZZOLA FLÓREZ HADDY ELIANA",
+            "COTRINA GARCIA SIXTO GABRIEL",
+            "SANABRIA ANZOLA ADRIAN SANTIAGO",
+			"VALDERRAMA LAGOS YOJHAN ADRIAN"
 
-        function getLocation() {
-            if (navigator.geolocation) {
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-                navigator.geolocation.getCurrentPosition(showPosition, showError, options);
-            } else {
-                document.getElementById("demo").innerHTML = "Geolocalización no soportada.";
+        ];
+
+        // Función para formatear moneda colombiana
+        const formatearMoneda = (cantidad) => {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(cantidad);
+        };
+
+        // Función para determinar el monto según el nombre
+        const obtenerMonto = (nombre) => {
+            if (nombre.includes("SANABRIA ANZOLA ADRIAN SANTIAGO")) {
+                return 10000;
             }
-        }
+            return 20000;
+        };
 
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const precision = position.coords.accuracy;
+        // Calcular total recaudado
+        const calcularTotal = () => {
+            let total = 0;
+            nombres.forEach(nombre => {
+                total += obtenerMonto(nombre);
+            });
+            return total;
+        };
+
+        // Renderizar la lista de pagos
+        const renderizarLista = () => {
+            const listaPagos = document.getElementById('listaPagos');
+            const totalRecaudado = calcularTotal();
             
-            document.getElementById("demo").innerHTML = 
-                `Latitud: ${lat}<br>Longitud: ${lon}<br>Precisión: ±${precision} metros`;
+            // Actualizar header
+            document.getElementById('totalAmount').textContent = formatearMoneda(totalRecaudado);
+            
+            // Generar lista de nombres
+            let html = '';
+            nombres.forEach(nombre => {
+                const monto = obtenerMonto(nombre);
+                const esEspecial = monto === 10000;
+                
+                html += `
+                    <div class="pago-item">
+                        <div class="nombre">
+                            ${nombre}
+                            ${esEspecial ? '<span class="badge">Debe 10,000</span>' : ''}
+                        </div>
+                        <div class="estado-pago">
+                            <span class="pagado-label">✅ Pagó</span>
+                            <span class="monto ${esEspecial ? 'Estudiantes con deudas' : ''}">
+                                ${formatearMoneda(monto)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listaPagos.innerHTML = html;
+            
+            // Generar resumen
+            const resumen = document.getElementById('resumen');
+            const totalPersonas = nombres.length;
+            const pagosNormales = nombres.filter(n => obtenerMonto(n) === 20000).length;
+            const pagoEspecial = nombres.filter(n => obtenerMonto(n) === 10000).length;
+            
+            resumen.innerHTML = `
+                <h3 style="margin-bottom: 15px; color: #333;">📊 Resumen de Pagos</h3>
+                <div class="resumen-item total-personas">
+                    <span>👥 Total de participantes:</span>
+                    <strong>${totalPersonas}</strong>
+                </div>
+                <div class="resumen-item">
+                    <span>💰 Pagos de $20,000:</span>
+                    <strong>${pagosNormales} personas</strong>
+                </div>
+                <div class="resumen-item">
+                    <span>💵 Deudas de estudiantes $10,000:</span>
+                    <strong>${pagoEspecial} persona</strong>
+                </div>
+                <div class="resumen-item total-recaudo-final">
+                    <span>💲 TOTAL RECAUDADO:</span>
+                    <strong>${formatearMoneda(totalRecaudado)}</strong>
+                </div>
+<div class="resumen-item total-recaudo-final">
+                    <span>Estudiantes faltantes:</span>
+                    <strong>3</strong>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
+                    <p>✅ Todos los pagos están confirmados</p>
+                    <p>📅 Fecha de corte: ${new Date().toLocaleDateString('es-CO')}</p>
+                </div>
+            `;
+        };
 
-            // --- Aquí creamos o actualizamos el mapa ---
-            const myLatLng = { lat, lng: lon };
-
-            // Si el mapa no existe aún, lo creamos
-            if (!map) {
-                map = new google.maps.Map(document.getElementById("map"), {
-                    center: myLatLng,
-                    zoom: 16,      // Zoom más cercano
-                });
-                marker = new google.maps.Marker({
-                    position: myLatLng,
-                    map: map,
-                    title: "Tu ubicación"
-                });
-            } else {
-                // Si ya existe, solo movemos centro y marcador
-                map.setCenter(myLatLng);
-                marker.setPosition(myLatLng);
-            }
-        }
-
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    document.getElementById("demo").innerHTML = "Permiso denegado.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    document.getElementById("demo").innerHTML = "Ubicación no disponible.";
-                    break;
-                case error.TIMEOUT:
-                    document.getElementById("demo").innerHTML = "Tiempo de espera agotado.";
-                    break;
-            }
-        }
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', renderizarLista);
     </script>
-
-    <!-- Carga de Google Maps con TU clave API -->
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0B-teq6ztQjfsznf8X503bKEPnVCSsD8&callback=Function.prototype">
-    </script>
-    <!-- El callback vacío evita que Google llame a initMap; nosotros creamos el mapa manualmente -->
 </body>
 </html>
