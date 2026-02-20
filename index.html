@@ -3,296 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Pagos - Recaudo</title>
+    <title>Doctrina de Dios · IASD · Quiz</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f2f5f9;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        .card {
+            max-width: 950px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
             overflow: hidden;
+            transition: all 0.2s ease;
         }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .card-header {
+            background: #1e2f4d; /* azul profundo IASD */
             color: white;
-            padding: 30px;
+            padding: 2rem 2.5rem;
             text-align: center;
         }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
+        .card-header h1 {
+            font-weight: 500;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
         }
-
-        .total-recaudado {
-            background-color: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 1.3em;
-            font-weight: bold;
+        .card-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-style: italic;
         }
-
-        .total-recaudado span {
-            font-size: 1.5em;
-            margin-left: 10px;
-            color: #ffd700;
+        .card-body {
+            padding: 2.5rem;
         }
-
-        .lista-pagos {
-            padding: 20px;
+        .inicio-box, .quiz-box, .result-box {
+            transition: opacity 0.2s ease;
         }
-
-        .pago-item {
+        .inicio-box {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .inicio-box h2 {
+            font-size: 1.8rem;
+            color: #1e2f4d;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        .inicio-box label {
+            display: block;
+            text-align: left;
+            margin: 1.5rem 0 0.5rem;
+            font-weight: 600;
+            color: #2c3e5c;
+        }
+        .inicio-box input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            font-size: 1.1rem;
+            border: 2px solid #dbe0e8;
+            border-radius: 60px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .inicio-box input:focus {
+            border-color: #1e2f4d;
+            box-shadow: 0 0 0 3px rgba(30,47,77,0.1);
+        }
+        .btn {
+            background: #1e2f4d;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 1rem 2.8rem;
+            border-radius: 60px;
+            cursor: pointer;
+            margin: 2rem 0 1rem;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 8px 16px -4px rgba(30,47,77,0.3);
+        }
+        .btn:hover {
+            background: #2b3f62;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-secondary {
+            background: #5d6f8f;
+            box-shadow: none;
+            margin-top: 1rem;
+        }
+        .btn-secondary:hover {
+            background: #4a5c7a;
+        }
+        .error-msg {
+            color: #b33;
+            margin: 0.5rem 0;
+            font-weight: 500;
+            min-height: 2rem;
+        }
+        /* ————— ESTILOS QUIZ ————— */
+        .quiz-box h2 {
+            color: #1e2f4d;
+            margin-bottom: 1.8rem;
+            font-weight: 500;
+            border-bottom: 2px solid #e5eaf0;
+            padding-bottom: 0.8rem;
+        }
+        .pregunta {
+            background: #f8fafd;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+            transition: box-shadow 0.2s;
+        }
+        .pregunta:hover {
+            box-shadow: 0 8px 20px -8px rgba(0,20,40,0.15);
+        }
+        .pregunta p {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #0b1a30;
+            margin-bottom: 1.2rem;
+        }
+        .opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .opcion {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            border: 1.5px solid #dde3ec;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+        .opcion:hover {
+            background: #e9eff9;
+            border-color: #1e2f4d;
+        }
+        .opcion input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.3rem;
+            height: 1.3rem;
+            border: 2px solid #a3b3cc;
+            border-radius: 50%;
+            margin-right: 1.2rem;
+            position: relative;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opcion input[type="radio"]:checked {
+            border-color: #1e2f4d;
+            background-color: #1e2f4d;
+            box-shadow: inset 0 0 0 4px white;
+        }
+        .opcion label {
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+            color: #1f2a41;
+            font-weight: 450;
+        }
+        .acciones {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.3s;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
         }
-
-        .pago-item:hover {
-            background-color: #f5f5f5;
+        .result-box {
+            background: #eef3fa;
+            border-radius: 2rem;
+            padding: 2rem;
+            text-align: center;
+            margin: 1.5rem 0 0;
         }
-
-        .nombre {
-            font-size: 1.1em;
-            color: #333;
-            flex: 2;
+        .result-box h3 {
+            font-size: 2.5rem;
+            color: #1e2f4d;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
-
-        .estado-pago {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .result-box p {
+            font-size: 1.4rem;
+            margin-bottom: 1.8rem;
         }
-
-        .pagado-label {
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.1em;
+        .resultado-detalle {
+            font-size: 1.2rem;
+            background: white;
+            border-radius: 3rem;
+            padding: 1rem 2rem;
+            display: inline-block;
         }
-
-        .monto {
-            background-color: #28a745;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            min-width: 80px;
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #7a8aa5;
             text-align: center;
         }
-
-        .monto-especial {
-            background-color: #ffc107;
-            color: #333;
+        .hidden {
+            display: none;
         }
-
-        .resumen {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-top: 2px solid #667eea;
-        }
-
-        .resumen-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .total-personas {
-            background-color: #e3f2fd;
-        }
-
-        .total-recaudo-final {
-            background-color: #d4edda;
-            font-weight: bold;
-            font-size: 1.4em;
-        }
-
-        .badge {
-            background-color: #28a745;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
-
-        @media (max-width: 600px) {
-            .pago-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .estado-pago {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
+        .mb-1 { margin-bottom: 0.8rem; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💰 Registro de Pagos</h1>
-            <p>Lista de participantes y estado de cuentas</p>
-            <div class="total-recaudado" id="totalRecaudadoHeader">
-                Total Recaudado: <span id="totalAmount">$0</span>
+    <div class="card">
+        <div class="card-header">
+            <h1>⚜️ DOCTRINA DE DIOS ⚜️</h1>
+            <p>Iglesia Adventista del Séptimo Día · Fundamentos</p>
+        </div>
+        <div class="card-body" id="app">
+            <!-- PANTALLA INICIAL: NOMBRE -->
+            <div id="inicioContainer" class="inicio-box">
+                <h2>Bienvenido</h2>
+                <p style="margin-bottom: 1rem;">Pon a prueba tu conocimiento sobre la Trinidad, las Escrituras y la Deidad.</p>
+                <label for="nombreInput">Tu nombre:</label>
+                <input type="text" id="nombreInput" placeholder="Ej. Elena, José, Miriam..." autocomplete="off">
+                <div id="errorNombre" class="error-msg"></div>
+                <button class="btn" id="btnComenzar">▶ COMENZAR QUIZ</button>
+                <div class="footer-note">15 preguntas · selección múltiple</div>
             </div>
-        </div>
 
-        <div class="lista-pagos" id="listaPagos">
-            <!-- Los nombres se cargarán dinámicamente con JavaScript -->
-        </div>
-
-        <div class="resumen" id="resumen">
-            <!-- El resumen se cargará dinámicamente -->
+            <!-- CONTENEDOR QUIZ (oculto al inicio) -->
+            <div id="quizContainer" class="quiz-box hidden">
+                <h2 id="saludoNombre"></h2>
+                <div id="preguntasDinamicas"></div>
+                <div class="acciones">
+                    <button class="btn btn-secondary" id="btnReiniciar">↺ Volver al inicio</button>
+                    <button class="btn" id="btnEnviar">✔ ENVIAR RESPUESTAS</button>
+                </div>
+                <div id="resultadoFinal" class="result-box hidden"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Lista de nombres
-        const nombres = [
-            "CAÑON FRANCO JUAN MATTIAS",
-            "CORREA PALENCIA TAI SHIREL",
-            "ESTUPIÑAN MELENDEZ JUAN DIEGO",
-            "GARCIA SEPULVEDA SAMUEL DAVID",
-            "GÓMEZ NIÑO THALIANA",
-            "MAGURNO MARTINEZ MARIANGEL",
-            "NOVOA ROMERO ISABEL SOFIA",
-            "OLARTE ACOSTA PAULINA DEL SOL",
-            "OSPINA CRUZ MILAN ENRIQUE",
-            "PARALES CASTELLANOS THIAGO GIOVANNY",
-            "RIVERA GOMEZ MATHIAS",
-            "RIVERA GUARIN NICOLAS",
-            "TORRES VILLAMIZAR TAYLOR",
-            "VALENCIA JAIMES MARIANGEL",
-            "MARTINEZ ZAPATA SAMUEL",
-            "FELIZZOLA FLÓREZ HADDY ELIANA",
-            "COTRINA GARCIA SIXTO GABRIEL",
-            "SANABRIA ANZOLA ADRIAN SANTIAGO",
-			"VALDERRAMA LAGOS YOJHAN ADRIAN",
-			"ORTEGA PINEDA SAMUEL DAVID"
+        (function() {
+            // ---------- BASE DE DATOS: 15 PREGUNTAS (selección múltiple, una respuesta) ----------
+            const preguntas = [
+                {   pregunta: "1. ¿Cuál es la base de todas las doctrinas para la IASD?",
+                    opciones: ["La tradición de la iglesia", "Las revelaciones modernas", "Las Sagradas Escrituras", "Los escritos de Elena G. de White"],
+                    correcta: 2 // índice 0-based: "Las Sagradas Escrituras"
+                },
+                {   pregunta: "2. ¿Cómo describen las Sagradas Escrituras su propia inspiración?",
+                    opciones: ["Fueron escritas por voluntad humana", "Hombres hablaron siendo movidos por el Espíritu Santo", "Fueron dictadas verbalmente por Dios", "Son solo relatos históricos"],
+                    correcta: 1
+                },
+                {   pregunta: "3. Según la IASD, ¿cómo está constituida la Deidad?",
+                    opciones: ["Un solo Dios en una persona", "Padre, Hijo y Espíritu Santo, tres personas coeternas", "Dios Padre y Jesús como ser creado", "Una energía divina impersonal"],
+                    correcta: 1
+                },
+                {   pregunta: "4. ¿Qué texto bíblico apoya la fórmula bautismal trinitaria?",
+                    opciones: ["Hechos 2:38", "Mateo 28:19", "Romanos 6:3", "1 Corintios 1:13"],
+                    correcta: 1
+                },
+                {   pregunta: "5. ¿Cuál es el papel de Dios Padre en la creación?",
+                    opciones: ["Es el Creador, Originador y Sustentador de todo", "Solo dio la orden pero no participó", "Creó únicamente a los ángeles", "Es parte de la creación"],
+                    correcta: 0
+                },
+                {   pregunta: "6. ¿Cómo se define el carácter de Dios Padre?",
+                    opciones: ["Severo y castigador", "Distante e inaccesible", "Justo, misericordioso y abundante en amor", "Cambiante según las circunstancias"],
+                    correcta: 2
+                },
+                {   pregunta: "7. ¿Quién es Jesucristo según la doctrina IASD?",
+                    opciones: ["Un profeta como los demás", "Un ángel creado", "Verdaderamente Dios y verdaderamente hombre", "Un ser divino inferior al Padre"],
+                    correcta: 2
+                },
+                {   pregunta: "8. ¿Por medio de quién se crearon todas las cosas?",
+                    opciones: ["El Padre solamente", "El Espíritu Santo solamente", "Jesucristo", "Los ángeles"],
+                    correcta: 2
+                },
+                {   pregunta: "9. ¿Qué logró la muerte de Jesús en la cruz?",
+                    opciones: ["Un ejemplo de fidelidad, pero no salvación", "Pagar por nuestros pecados en nuestro lugar", "Convencer al Padre de amarnos", "Cancelar la ley de Dios"],
+                    correcta: 1
+                },
+                {   pregunta: "10. ¿Qué hace Jesús actualmente en el cielo?",
+                    opciones: ["Está sentado sin hacer nada", "Prepara mansiones y ministra como Sumo Sacerdote", "Intercede solo por los apóstoles", "Ha delegado todo al Espíritu Santo"],
+                    correcta: 1
+                },
+                {   pregunta: "11. El Espíritu Santo es presentado como:",
+                    opciones: ["Una fuerza impersonal de Dios", "Una persona divina", "Un ángel especial", "La influencia de la iglesia"],
+                    correcta: 1
+                },
+                {   pregunta: "12. ¿Cuál es una función específica del Espíritu Santo?",
+                    opciones: ["Inspirar a los autores bíblicos", "Guiar a la iglesia a toda verdad", "Convencer de pecado", "Todas las anteriores"],
+                    correcta: 3
+                },
+                {   pregunta: "13. ¿En qué evento participó el Espíritu Santo junto al Padre y el Hijo?",
+                    opciones: ["Solo en el día de Pentecostés", "En la creación y en la encarnación", "Únicamente en la resurrección de Jesús", "No participó en la creación"],
+                    correcta: 1
+                },
+                {   pregunta: "14. ¿Qué enseña la IASD acerca de la segunda venida de Jesús?",
+                    opciones: ["Ya ocurrió espiritualmente", "No ocurrirá literalmente", "Será personal y visible para redimir a su pueblo", "Solo vendrá por la iglesia en secreto"],
+                    correcta: 2
+                },
+                {   pregunta: "15. Según la doctrina, ¿cómo se relacionan el Padre, el Hijo y el Espíritu Santo?",
+                    opciones: ["Son tres dioses separados", "Son el mismo Dios manifestado de diferentes modos", "Son tres personas coeternas en unidad de propósito y amor", "El Padre es superior al Hijo y al Espíritu"],
+                    correcta: 2
+                }
+            ];
 
-        ];
+            // Elementos del DOM
+            const inicioContainer = document.getElementById('inicioContainer');
+            const quizContainer = document.getElementById('quizContainer');
+            const nombreInput = document.getElementById('nombreInput');
+            const errorNombre = document.getElementById('errorNombre');
+            const btnComenzar = document.getElementById('btnComenzar');
+            const saludoNombre = document.getElementById('saludoNombre');
+            const preguntasDinamicas = document.getElementById('preguntasDinamicas');
+            const btnEnviar = document.getElementById('btnEnviar');
+            const btnReiniciar = document.getElementById('btnReiniciar');
+            const resultadoFinal = document.getElementById('resultadoFinal');
 
-        // Función para formatear moneda colombiana
-        const formatearMoneda = (cantidad) => {
-            return new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(cantidad);
-        };
+            let nombreParticipante = '';
 
-        // Función para determinar el monto según el nombre
-        const obtenerMonto = (nombre) => {
-            if (nombre.includes("SANABRIA ANZOLA ADRIAN SANTIAGO")) {
-                return 20000;
+            // Función para renderizar todas las preguntas con radios
+            function renderQuiz() {
+                let html = '';
+                preguntas.forEach((p, idx) => {
+                    html += `<div class="pregunta" id="preg-${idx}">`;
+                    html += `<p>${p.pregunta}</p>`;
+                    html += `<div class="opciones">`;
+                    p.opciones.forEach((opcion, opIdx) => {
+                        const nameAttr = `p${idx}`; // grupo único por pregunta
+                        html += `
+                            <div class="opcion">
+                                <input type="radio" name="${nameAttr}" value="${opIdx}" id="${nameAttr}-${opIdx}">
+                                <label for="${nameAttr}-${opIdx}">${String.fromCharCode(65 + opIdx)}. ${opcion}</label>
+                            </div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                });
+                preguntasDinamicas.innerHTML = html;
             }
-            return 20000;
-        };
 
-        // Calcular total recaudado
-        const calcularTotal = () => {
-            let total = 0;
-            nombres.forEach(nombre => {
-                total += obtenerMonto(nombre);
-            });
-            return total;
-        };
+            // Calcular puntuación
+            function calcularPuntuacion() {
+                let aciertos = 0;
+                preguntas.forEach((pregunta, index) => {
+                    const radios = document.getElementsByName(`p${index}`);
+                    let seleccionado = null;
+                    for (let radio of radios) {
+                        if (radio.checked) {
+                            seleccionado = radio.value;
+                            break;
+                        }
+                    }
+                    if (seleccionado !== null && parseInt(seleccionado) === pregunta.correcta) {
+                        aciertos++;
+                    }
+                });
+                return aciertos;
+            }
 
-        // Renderizar la lista de pagos
-        const renderizarLista = () => {
-            const listaPagos = document.getElementById('listaPagos');
-            const totalRecaudado = calcularTotal();
-            
-            // Actualizar header
-            document.getElementById('totalAmount').textContent = formatearMoneda(totalRecaudado);
-            
-            // Generar lista de nombres
-            let html = '';
-            nombres.forEach(nombre => {
-                const monto = obtenerMonto(nombre);
-                const esEspecial = monto === 10000;
-                
-                html += `
-                    <div class="pago-item">
-                        <div class="nombre">
-                            ${nombre}
-                            ${esEspecial ? '<span class="badge">Debe 10,000</span>' : ''}
-                        </div>
-                        <div class="estado-pago">
-                            <span class="pagado-label">✅ Pagó</span>
-                            <span class="monto ${esEspecial ? 'Estudiantes con deudas' : ''}">
-                                ${formatearMoneda(monto)}
-                            </span>
-                        </div>
-                    </div>
+            // Mostrar resultado
+            function mostrarResultado() {
+                const aciertos = calcularPuntuacion();
+                const total = preguntas.length;
+                const porcentaje = Math.round((aciertos / total) * 100);
+                let mensaje = '';
+                if (aciertos === total) mensaje = '¡Excelente! Dominas la doctrina.';
+                else if (aciertos >= 12) mensaje = 'Muy bien, conoces los fundamentos.';
+                else if (aciertos >= 8) mensaje = 'Bien, pero puedes repasar algunos puntos.';
+                else mensaje = 'Te animamos a estudiar más la Palabra.';
+
+                resultadoFinal.innerHTML = `
+                    <h3>${nombreParticipante}</h3>
+                    <p>Puntuación: ${aciertos} / ${total} (${porcentaje}%)</p>
+                    <div class="resultado-detalle">${mensaje}</div>
                 `;
-            });
-            
-            listaPagos.innerHTML = html;
-            
-            // Generar resumen
-            const resumen = document.getElementById('resumen');
-            const totalPersonas = nombres.length;
-            const pagosNormales = nombres.filter(n => obtenerMonto(n) === 20000).length;
-            const pagoEspecial = nombres.filter(n => obtenerMonto(n) === 10000).length;
-            
-            resumen.innerHTML = `
-                <h3 style="margin-bottom: 15px; color: #333;">📊 Resumen de Pagos</h3>
-                <div class="resumen-item total-personas">
-                    <span>👥 Total de participantes:</span>
-                    <strong>${totalPersonas}</strong>
-                </div>
-                <div class="resumen-item">
-                    <span>💰 Pagos de $20,000:</span>
-                    <strong>${pagosNormales} personas</strong>
-                </div>
-                <div class="resumen-item">
-                    <span>💵 Deudas de estudiantes $10,000:</span>
-                    <strong>${pagoEspecial} persona</strong>
-                </div>
-                <div class="resumen-item total-recaudo-final">
-                    <span>💲 TOTAL RECAUDADO:</span>
-                    <strong>${formatearMoneda(totalRecaudado)}</strong>
-                </div>
-<div class="resumen-item total-recaudo-final">
-                    <span>Estudiantes faltantes:</span>
-                    <strong>3</strong>
-                </div>
-                <div style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
-                    <p>✅ Todos los pagos están confirmados</p>
-                    <p>📅 Fecha de corte: ${new Date().toLocaleDateString('es-CO')}</p>
-                </div>
-            `;
-        };
+                resultadoFinal.classList.remove('hidden');
+            }
 
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', renderizarLista);
+            // Validar y comenzar
+            btnComenzar.addEventListener('click', function() {
+                const nombre = nombreInput.value.trim();
+                if (nombre === '') {
+                    errorNombre.textContent = '✻ Por favor, ingresa tu nombre.';
+                    return;
+                }
+                errorNombre.textContent = '';
+                nombreParticipante = nombre;
+                saludoNombre.textContent = `✤  ${nombreParticipante}, responde con atención:`;
+                // ocultar inicio, mostrar quiz
+                inicioContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden');
+                renderQuiz();
+                // Ocultar resultado previo si lo hubiera
+                resultadoFinal.classList.add('hidden');
+            });
+
+            // Enviar respuestas y mostrar resultado
+            btnEnviar.addEventListener('click', function() {
+                // Verificar que haya al menos una respuesta (opcional, pero se puede)
+                // Mostramos el resultado aunque haya preguntas sin contestar (se tomarán como incorrectas)
+                mostrarResultado();
+                // desplazar suavemente al resultado
+                resultadoFinal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+            // Reiniciar (volver al inicio con todo limpio)
+            btnReiniciar.addEventListener('click', function() {
+                // limpiar nombre y reiniciar vistas
+                nombreInput.value = '';
+                errorNombre.textContent = '';
+                inicioContainer.classList.remove('hidden');
+                quizContainer.classList.add('hidden');
+                resultadoFinal.classList.add('hidden');
+                // Opcional: eliminar selecciones previas del DOM al volver a empezar
+            });
+
+            // Pequeño detalle: al presionar Enter en el input también comenzar
+            nombreInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnComenzar.click();
+                }
+            });
+
+            // Inicialización: aseguramos estado inicial (quiz oculto)
+            quizContainer.classList.add('hidden');
+            resultadoFinal.classList.add('hidden');
+        })();
     </script>
 </body>
 </html>
