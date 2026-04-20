@@ -1,298 +1,521 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Pagos - Recaudo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Control de Aportes - Todos han consignado $12.000 COP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
+    }
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      background: #eef2f9;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
+    .dashboard {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+    .hero {
+      background: #0b3b2f;
+      background: linear-gradient(135deg, #0a5c4a, #0a3b2f);
+      padding: 1.8rem 2rem;
+      color: white;
+    }
 
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
+    .hero h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-        .total-recaudado {
-            background-color: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 1.3em;
-            font-weight: bold;
-        }
+    .hero h1 span {
+      background: #f5b042;
+      color: #0a3b2f;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+    }
 
-        .total-recaudado span {
-            font-size: 1.5em;
-            margin-left: 10px;
-            color: #ffd700;
-        }
+    .sub {
+      margin-top: 0.6rem;
+      border-left: 3px solid #f5b042;
+      padding-left: 1rem;
+      opacity: 0.9;
+    }
 
-        .lista-pagos {
-            padding: 20px;
-        }
+    .stats-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.5rem 2rem;
+      background: #fefefe;
+      border-bottom: 1px solid #e2edf2;
+    }
 
-        .pago-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.3s;
-        }
+    .stat-card {
+      background: white;
+      border-radius: 1.2rem;
+      padding: 0.8rem 1.4rem;
+      flex: 1 1 160px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      border: 1px solid #dce5f0;
+    }
 
-        .pago-item:hover {
-            background-color: #f5f5f5;
-        }
+    .stat-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #4b6a7c;
+      margin-bottom: 0.4rem;
+    }
 
-        .nombre {
-            font-size: 1.1em;
-            color: #333;
-            flex: 2;
-        }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0b3b2f;
+    }
 
-        .estado-pago {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    .badge-success {
+      background: #10b981;
+      color: white;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
 
-        .pagado-label {
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
+    .table-wrapper {
+      overflow-x: auto;
+      padding: 0 1rem 1rem 1rem;
+    }
 
-        .monto {
-            background-color: #28a745;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            min-width: 80px;
-            text-align: center;
-        }
+    .student-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-        .monto-especial {
-            background-color: #ffc107;
-            color: #333;
-        }
+    .student-table th {
+      text-align: left;
+      padding: 1rem 0.8rem;
+      background: #f4f9fe;
+      color: #1e4a3b;
+      border-bottom: 2px solid #d4e2ec;
+    }
 
-        .resumen {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-top: 2px solid #667eea;
-        }
+    .student-table td {
+      padding: 0.9rem 0.8rem;
+      border-bottom: 1px solid #eef3fa;
+      vertical-align: middle;
+    }
 
-        .resumen-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 8px;
-        }
+    .status-paid {
+      background: #d1fae5;
+      color: #065f46;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+      font-weight: 500;
+    }
 
-        .total-personas {
-            background-color: #e3f2fd;
-        }
+    .code-note {
+      background: #1f2a3e;
+      color: #cbd5e6;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      margin: 1.5rem 2rem;
+      overflow-x: auto;
+    }
 
-        .total-recaudo-final {
-            background-color: #d4edda;
-            font-weight: bold;
-            font-size: 1.4em;
-        }
+    .admin-panel {
+      background: #f9fbfe;
+      margin: 1rem 2rem 2rem 2rem;
+      padding: 1.5rem;
+      border-radius: 1.5rem;
+      border: 1px solid #cbdde9;
+    }
 
-        .badge {
-            background-color: #28a745;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
+    .admin-title {
+      font-weight: 700;
+      color: #0b5e4a;
+      margin-bottom: 1rem;
+    }
 
-        @media (max-width: 600px) {
-            .pago-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .estado-pago {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-    </style>
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .input-group {
+      flex: 2;
+      min-width: 200px;
+    }
+
+    .input-group label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #2c5a4a;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border-radius: 60px;
+      border: 1px solid #bcd0df;
+    }
+
+    .btn-primary {
+      background: #0b5e4a;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #094433;
+    }
+
+    .btn-reset {
+      background: #e2e8f0;
+      color: #1f3b33;
+    }
+
+    .btn-reset:hover {
+      background: #cbd5e1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.7rem;
+      color: #5f7f6e;
+      border-top: 1px solid #e2edf2;
+    }
+
+    /* Modal de seguridad */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      max-width: 380px;
+      width: 90%;
+      padding: 1.8rem;
+      border-radius: 2rem;
+      text-align: center;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: #0b5e4a;
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 1rem 0;
+      border: 1px solid #ccc;
+      border-radius: 60px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+    }
+    .modal-buttons button {
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-confirm {
+      background: #0b5e4a;
+      color: white;
+    }
+    .btn-cancel {
+      background: #e2e8f0;
+      color: #2d3e3a;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💰 Registro de Pagos</h1>
-            <p>Lista de participantes y estado de cuentas</p>
-            <div class="total-recaudado" id="totalRecaudadoHeader">
-                Total Recaudado: <span id="totalAmount">$0</span>
-            </div>
-        </div>
+<div class="dashboard">
+  <div class="hero">
+    <h1>📋 Aportes Estudiantiles <span>$12.000 COP c/u</span></h1>
+    <div class="sub">
+      ✅ <strong>Todos los estudiantes de la lista ya han consignado su aporte de $12.000 pesos colombianos.</strong><br>
+      Visualización para padres: cada nombre aparece con su pago confirmado.
+    </div>
+  </div>
 
-        <div class="lista-pagos" id="listaPagos">
-            <!-- Los nombres se cargarán dinámicamente con JavaScript -->
-        </div>
+  <div class="stats-grid" id="statsContainer"></div>
 
-        <div class="resumen" id="resumen">
-            <!-- El resumen se cargará dinámicamente -->
-        </div>
+  <div class="table-wrapper">
+    <table class="student-table">
+      <thead>
+        <tr><th>#</th><th>Nombre completo del estudiante</th><th>Aporte</th><th>Estado de pago</th></tr>
+      </thead>
+      <tbody id="studentTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Panel para agregar estudiantes faltantes (protegido por código) -->
+  <div class="admin-panel">
+    <div class="admin-title">➕ Agregar estudiante (solo para administradores)</div>
+    <div class="form-row">
+      <div class="input-group">
+        <label>NOMBRE COMPLETO</label>
+        <input type="text" id="newStudentName" placeholder="Ej: LÓPEZ RAMÍREZ SOFÍA">
+      </div>
+      <button class="btn-primary" id="addStudentBtn">Añadir estudiante (pagado automático)</button>
+      
     </div>
 
-    <script>
-        // Lista de nombres
-        const nombres = [
-            "CAÑON FRANCO JUAN MATTIAS",
-            "CORREA PALENCIA TAI SHIREL",
-            "ESTUPIÑAN MELENDEZ JUAN DIEGO",
-            "GARCIA SEPULVEDA SAMUEL DAVID",
-            "GÓMEZ NIÑO THALIANA",
-            "MAGURNO MARTINEZ MARIANGEL",
-            "NOVOA ROMERO ISABEL SOFIA",
-            "OLARTE ACOSTA PAULINA DEL SOL",
-            "OSPINA CRUZ MILAN ENRIQUE",
-            "PARALES CASTELLANOS THIAGO GIOVANNY",
-            "RIVERA GOMEZ MATHIAS",
-            "RIVERA GUARIN NICOLAS",
-            "TORRES VILLAMIZAR TAYLOR",
-            "VALENCIA JAIMES MARIANGEL",
-            "MARTINEZ ZAPATA SAMUEL",
-            "FELIZZOLA FLÓREZ HADDY ELIANA",
-            "COTRINA GARCIA SIXTO GABRIEL",
-            "SANABRIA ANZOLA ADRIAN SANTIAGO",
-			"VALDERRAMA LAGOS YOJHAN ADRIAN",
-			"ORTEGA PINEDA SAMUEL DAVID"
+    <!-- INSTRUCCIÓN CLARA: DÓNDE EDITAR EN EL CÓDIGO -->
+    
+  </div>
+  <footer>💰 Aporte fijo por estudiante: $12.000 COP. Todos los estudiantes relacionados han consignado su valor. Solo personal autorizado puede añadir nuevos nombres.</footer>
+</div>
 
-        ];
+<!-- Modal para código de seguridad -->
+<div id="securityModal" class="modal">
+  <div class="modal-content">
+    <h3>🔐 Código de seguridad requerido</h3>
+    <p>Para agregar un nuevo estudiante, ingresa el código de autorización.</p>
+    <input type="password" id="securityCodeInput" placeholder="Código" autocomplete="off">
+    <div class="modal-buttons">
+      <button class="btn-confirm" id="modalConfirmBtn">Verificar</button>
+      <button class="btn-cancel" id="modalCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
 
-        // Función para formatear moneda colombiana
-        const formatearMoneda = (cantidad) => {
-            return new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(cantidad);
+<script>
+  // ============================================================
+  // 🟢 ZONA PARA EDITAR / AGREGAR ESTUDIANTES MANUALMENTE 🟢
+  // ============================================================
+  const SECRET_CODE = "1049.Mister";   // Código de seguridad exacto (respeta mayúscula M)
+
+  // MODIFICA EL ARREGLO 'defaultRaw' para añadir o quitar estudiantes.
+  // Todos tienen 'paid: true' porque ya aportaron.
+  function getDefaultStudentList() {
+    const defaultRaw = [
+      { name: "CABALLERO CÁRDENAS CHRISTOPHER ELIAN", paid: true },
+      { name: "CORREA PALENCIA TAI SHIREL", paid: true },
+      { name: "COTRINA GARCIA SIXTO GABRIEL", paid: true },
+      { name: "ESTUPIÑAN MELENDEZ JUAN DIEGO", paid: true },
+      { name: "FELIZZOLA FLÓREZ HADDY ELIANA", paid: true },
+      { name: "GARCIA SEPULVEDA SAMUEL DAVID", paid: true },
+      { name: "GÓMEZ NIÑO THALIANA", paid: true },
+      { name: "MAGURNO MARTINEZ MARIANGEL", paid: true },
+      { name: "MARTINEZ ZAPATA SAMUEL", paid: true },
+      { name: "NOVOA ROMERO ISABEL SOFIA", paid: true },
+      { name: "ORTEGA PINEDA SAMUEL DAVID", paid: true },
+      { name: "OSPINA CRUZ MILAN ENRIQUE", paid: true },
+      { name: "RIVERA GOMEZ MATHIAS", paid: true },
+      { name: "RIVERA GUARIN NICOLAS", paid: true },
+      { name: "RODRÍGUEZ SALAMANCA LUIS ALEJANDRO", paid: true },
+      { name: "SANABRIA ANZOLA ADRIAN SANTIAGO", paid: true },
+      { name: "VALDERRAMA LAGOS YOJHAN ADRIAN", paid: true },
+      { name: "VALENCIA JAIMES MARIANGEL", paid: true }
+    ];
+    // 🔽 Si deseas agregar otro estudiante manualmente (sin necesidad de código, desde el código fuente), descomenta:
+    // defaultRaw.push({ name: "NUEVO ESTUDIANTE EJEMPLO", paid: true });
+    
+    return defaultRaw.map((student, idx) => ({
+      id: idx + 1,
+      name: student.name,
+      paid: student.paid  // siempre true según requerimiento
+    }));
+  }
+
+  // --------------------------------------------------------------
+  // ESTADO GLOBAL
+  let students = [];
+  let nextId = 1;
+  let pendingStudentToAdd = null;   // almacenar temporalmente nombre a agregar
+
+  function updateNextId() {
+    nextId = students.length ? Math.max(...students.map(s => s.id)) + 1 : 1;
+  }
+
+  function loadInitialData() {
+    const defaultList = getDefaultStudentList();
+    students = defaultList.map(s => ({ ...s }));
+    updateNextId();
+    renderAll();
+  }
+
+  function renderAll() {
+    renderStats();
+    renderTable();
+  }
+
+  function renderStats() {
+    const total = students.length;
+    const totalRecaudado = total * 12000;
+    const statsHtml = `
+      <div class="stat-card"><h3>👩‍🎓 Estudiantes</h3><div class="stat-number">${total}</div><div class="badge-success">todos inscritos</div></div>
+      <div class="stat-card"><h3>✅ Aportes completos</h3><div class="stat-number">${total}</div><div class="badge-success">100% pagó</div></div>
+      <div class="stat-card"><h3>💰 Total recaudado</h3><div class="stat-number">$${totalRecaudado.toLocaleString('es-CO')}</div><div class="badge-success">COP</div></div>
+      <div class="stat-card"><h3>📌 Aporte individual</h3><div class="stat-number">$12.000</div><div>pesos colombianos</div></div>
+    `;
+    document.getElementById('statsContainer').innerHTML = statsHtml;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('studentTableBody');
+    if (!tbody) return;
+    if (students.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:2rem;">📭 No hay estudiantes. Agrega usando el panel o restaura la lista.</td></tr>`;
+      return;
+    }
+    let rows = '';
+    students.forEach((student, idx) => {
+      rows += `
+        <tr>
+          <td>${idx + 1}</td>
+          <td><strong>${escapeHtml(student.name)}</strong></td>
+          <td>$12.000 COP</td>
+          <td><span class="status-paid">✅ Pagado - consignado $12.000</span></td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = rows;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // Función que muestra el modal para pedir código
+  function requestSecurityCode(studentName) {
+    pendingStudentToAdd = studentName;
+    const modal = document.getElementById('securityModal');
+    const input = document.getElementById('securityCodeInput');
+    input.value = '';
+    modal.style.display = 'flex';
+    input.focus();
+  }
+
+  // Verificar código y agregar estudiante si es correcto
+  function verifyAndAddStudent() {
+    const inputCode = document.getElementById('securityCodeInput').value;
+    if (inputCode === SECRET_CODE) {
+      // Código correcto: agregar estudiante
+      if (pendingStudentToAdd) {
+        const newStudent = {
+          id: nextId,
+          name: pendingStudentToAdd,
+          paid: true    // siempre pagado (aporte de 12.000)
         };
+        students.push(newStudent);
+        updateNextId();
+        renderAll();
+        // limpiar campo del nombre
+        document.getElementById('newStudentName').value = '';
+        alert(`✅ Estudiante "${pendingStudentToAdd}" agregado correctamente.`);
+        pendingStudentToAdd = null;
+      }
+      closeModal();
+    } else {
+      alert("❌ Código de seguridad incorrecto. No se puede agregar el estudiante.");
+      closeModal();
+      pendingStudentToAdd = null;
+    }
+  }
 
-        // Función para determinar el monto según el nombre
-        const obtenerMonto = (nombre) => {
-            if (nombre.includes("SANABRIA ANZOLA ADRIAN SANTIAGO")) {
-                return 20000;
-            }
-            return 20000;
-        };
+  function closeModal() {
+    const modal = document.getElementById('securityModal');
+    modal.style.display = 'none';
+    pendingStudentToAdd = null;
+  }
 
-        // Calcular total recaudado
-        const calcularTotal = () => {
-            let total = 0;
-            nombres.forEach(nombre => {
-                total += obtenerMonto(nombre);
-            });
-            return total;
-        };
+  // Manejador cuando se hace clic en "Añadir estudiante"
+  function onAddStudentClick() {
+    const nameInput = document.getElementById('newStudentName');
+    const newName = nameInput.value.trim();
+    if (newName === "") {
+      alert("Escribe el nombre completo del estudiante que falta por pagar (o que deseas agregar).");
+      return;
+    }
+    // Verificar si ya existe (opcional, pero evita duplicados)
+    const exists = students.some(s => s.name.toLowerCase() === newName.toLowerCase());
+    if (exists) {
+      alert("⚠️ Este estudiante ya se encuentra en la lista.");
+      return;
+    }
+    // Solicitar código de seguridad
+    requestSecurityCode(newName);
+  }
 
-        // Renderizar la lista de pagos
-        const renderizarLista = () => {
-            const listaPagos = document.getElementById('listaPagos');
-            const totalRecaudado = calcularTotal();
-            
-            // Actualizar header
-            document.getElementById('totalAmount').textContent = formatearMoneda(totalRecaudado);
-            
-            // Generar lista de nombres
-            let html = '';
-            nombres.forEach(nombre => {
-                const monto = obtenerMonto(nombre);
-                const esEspecial = monto === 10000;
-                
-                html += `
-                    <div class="pago-item">
-                        <div class="nombre">
-                            ${nombre}
-                            ${esEspecial ? '<span class="badge">Debe 10,000</span>' : ''}
-                        </div>
-                        <div class="estado-pago">
-                            <span class="pagado-label">✅ Pagó</span>
-                            <span class="monto ${esEspecial ? 'Estudiantes con deudas' : ''}">
-                                ${formatearMoneda(monto)}
-                            </span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            listaPagos.innerHTML = html;
-            
-            // Generar resumen
-            const resumen = document.getElementById('resumen');
-            const totalPersonas = nombres.length;
-            const pagosNormales = nombres.filter(n => obtenerMonto(n) === 20000).length;
-            const pagoEspecial = nombres.filter(n => obtenerMonto(n) === 10000).length;
-            
-            resumen.innerHTML = `
-                <h3 style="margin-bottom: 15px; color: #333;">📊 Resumen de Pagos</h3>
-                <div class="resumen-item total-personas">
-                    <span>👥 Total de participantes:</span>
-                    <strong>${totalPersonas}</strong>
-                </div>
-                <div class="resumen-item">
-                    <span>💰 Pagos de $20,000:</span>
-                    <strong>${pagosNormales} personas</strong>
-                </div>
-                <div class="resumen-item">
-                    <span>💵 Deudas de estudiantes $10,000:</span>
-                    <strong>${pagoEspecial} persona</strong>
-                </div>
-                <div class="resumen-item total-recaudo-final">
-                    <span>💲 TOTAL RECAUDADO:</span>
-                    <strong>${formatearMoneda(totalRecaudado)}</strong>
-                </div>
-<div class="resumen-item total-recaudo-final">
-                    <span>Estudiantes faltantes:</span>
-                    <strong>3</strong>
-                </div>
-                <div style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
-                    <p>✅ Todos los pagos están confirmados</p>
-                    <p>📅 Fecha de corte: ${new Date().toLocaleDateString('es-CO')}</p>
-                </div>
-            `;
-        };
 
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', renderizarLista);
-    </script>
+
+  // Inicialización y eventos
+  document.addEventListener('DOMContentLoaded', () => {
+    loadInitialData();
+    document.getElementById('addStudentBtn').addEventListener('click', onAddStudentClick);
+    document.getElementById('resetBtn').addEventListener('click', resetToOriginal);
+    document.getElementById('modalConfirmBtn').addEventListener('click', verifyAndAddStudent);
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    // Cerrar modal si se hace clic fuera del contenido (opcional)
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('securityModal');
+      if (e.target === modal) closeModal();
+    });
+    // Permitir Enter dentro del input del modal
+    const codeInput = document.getElementById('securityCodeInput');
+    if (codeInput) {
+      codeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') verifyAndAddStudent();
+      });
+    }
+    const nameField = document.getElementById('newStudentName');
+    if (nameField) {
+      nameField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') onAddStudentClick();
+      });
+    }
+  });
+</script>
 </body>
 </html>
